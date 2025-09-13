@@ -2,7 +2,7 @@ INSERT INTO roles (name, description) VALUES
 ('admin', 'Allows access to admin and attendance web'),
 ('employee', 'Allows access to attendance web');
 
---Password example = password123, bcrypt hash
+-- Password example = password123, bcrypt hash
 INSERT INTO users (email, password, role_id) VALUES
 ('admin@dexagroup.com', '$2b$10$CwTycUXWue0Thq9StjUM0uJ8vZPzjTnQhP9Jw4rD2oI9x9RlhSyeK', 1),
 ('glen@dexagroup.com', '$2b$10$CwTycUXWue0Thq9StjUM0uJ8vZPzjTnQhP9Jw4rD2oI9x9RlhSyeK', 2);
