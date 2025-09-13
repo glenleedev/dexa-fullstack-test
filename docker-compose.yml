@@ -1,0 +1,13 @@
+services:
+  db_main:
+    image: mysql:8.0
+    container_name: db_app
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      #docker-entrypoint-initdb.d is included in mysql official image
+      - ./db-init/app:/docker-entrypoint-initdb.d
