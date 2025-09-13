@@ -1,4 +1,4 @@
-CREATE TABLE roles (
+CREATE TABLE role (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   name VARCHAR(50) NOT NULL UNIQUE,
   description VARCHAR(255),
@@ -7,7 +7,7 @@ CREATE TABLE roles (
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE users (
+CREATE TABLE user (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
@@ -15,10 +15,10 @@ CREATE TABLE users (
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  CONSTRAINT fk_users_role FOREIGN KEY (role_id) REFERENCES roles(id)
+  CONSTRAINT fk_user_role FOREIGN KEY (role_id) REFERENCES role(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE positions (
+CREATE TABLE position (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   name VARCHAR(255) NOT NULL UNIQUE,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -26,7 +26,7 @@ CREATE TABLE positions (
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE employees (
+CREATE TABLE employee (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   user_id INT UNSIGNED NOT NULL,
   first_name VARCHAR(255) NOT NULL,
@@ -37,11 +37,11 @@ CREATE TABLE employees (
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  CONSTRAINT fk_employees_user FOREIGN KEY (user_id) REFERENCES users(id),
-  CONSTRAINT fk_employees_position FOREIGN KEY (position_id) REFERENCES positions(id)
+  CONSTRAINT fk_employee_user FOREIGN KEY (user_id) REFERENCES user(id),
+  CONSTRAINT fk_employee_position FOREIGN KEY (position_id) REFERENCES `position`(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE attendance_statuses (
+CREATE TABLE attendance_status (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   name VARCHAR(50) NOT NULL UNIQUE,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -49,12 +49,12 @@ CREATE TABLE attendance_statuses (
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE attendances (
+CREATE TABLE attendance (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   employee_id INT UNSIGNED NOT NULL,
   attendance_dttm DATETIME NOT NULL,
   status_id INT UNSIGNED NOT NULL,
   PRIMARY KEY (id),
-  CONSTRAINT fk_attendances_employee FOREIGN KEY (employee_id) REFERENCES employees(id),
-  CONSTRAINT fk_attendances_status FOREIGN KEY (status_id) REFERENCES attendance_statuses(id)
+  CONSTRAINT fk_attendance_employee FOREIGN KEY (employee_id) REFERENCES employee(id),
+  CONSTRAINT fk_attendance_status FOREIGN KEY (status_id) REFERENCES attendance_status(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
