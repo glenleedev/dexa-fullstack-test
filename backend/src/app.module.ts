@@ -3,21 +3,22 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Employee } from './employee/entities/employee.entity';
+import { Position } from './employee/entities/position.entity';
+import { Role } from './user/entities/role.entity';
+import { User } from './user/entities/user.entity';
+import { Attendance } from './attendance/entities/attendance.entity';
+import { AttendanceStatus } from './attendance/entities/attendance-status.entity';
+import { EmployeeModule } from './employee/employee.module';
+import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-import { EmployeesModule } from './employees/employees.module';
-import { User } from './entities/user.entity';
-import { Employee } from './entities/employee.entity';
-import { Attendance } from './entities/attendance.entity';
-import { AttendanceStatus } from './entities/attendance-status.entity';
-import { Position } from './entities/position.entity';
-import { Role } from './entities/role.entity';
 
 @Module({
   imports: [
     //registers the .env file outside of backend folder
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '../../.env',
+      envFilePath: '../.env',
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -31,7 +32,8 @@ import { Role } from './entities/role.entity';
     }),
     TypeOrmModule.forFeature([User, Employee, Attendance, AttendanceStatus, Position, Role]),
     AuthModule,
-    EmployeesModule
+    EmployeeModule,
+    UserModule
   ],
   controllers: [AppController],
   providers: [AppService],
