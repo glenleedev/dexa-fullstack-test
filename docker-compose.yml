@@ -1,13 +1,77 @@
 services:
+  #backend database
   db_main:
     image: mysql:8.0
     container_name: db_app
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${APP_DB_PASSWORD}
+      MYSQL_DATABASE: ${APP_DB_DATABASE}
     ports:
-      - "${MYSQL_PORT}:3306"
+      - "${APP_DB_PORT}:3306"
     volumes:
-      #docker-entrypoint-initdb.d is included in mysql official image
       - ./db-init/app:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p${APP_DB_PASSWORD} --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin_app
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db_main
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: ${APP_DB_PASSWORD}
+    ports:
+      - "8080:80"
+    depends_on:
+      db_main:
+        condition: service_healthy
+
+  #audit database
+  db_audit:
+    image: mysql:8.0
+    container_name: db_audit
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${AUDIT_DB_ROOT_PASSWORD:-auditpass}
+      MYSQL_DATABASE: ${AUDIT_DB_DATABASE:-audit_db}
+    ports:
+      - "${AUDIT_DB_PORT:-3307}:3306"
+    volumes:
+      - ./db-init/audit:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p${AUDIT_DB_ROOT_PASSWORD:-auditpass} --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+  phpmyadmin_audit:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin_audit
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db_audit
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: ${AUDIT_DB_ROOT_PASSWORD:-auditpass}
+    ports:
+      - "8081:80"
+    depends_on:
+      db_audit:
+        condition: service_healthy
+
+  #redpanda (kafka broker)
+  redpanda:
+    image: redpandadata/redpanda:v24.1.5
+    container_name: redpanda
+    restart: unless-stopped
+    command: redpanda start --overprovisioned --smp 1 --memory 512M --reserve-memory 0M --node-id 0
+    ports:
+      - "9092:9092" #api port
