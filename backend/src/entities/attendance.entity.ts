@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Employee } from "./employee.entity";
-import { AttendanceStatus } from "./attenance-status.entity";
+import { AttendanceStatus } from "./attendance-status.entity";
 
 @Index("fk_attendance_employee", ["employeeId"], {})
 @Index("fk_attendance_status", ["statusId"], {})
