@@ -5,7 +5,7 @@ import { Express } from 'express';
 export class ImageFileValidationPipe implements PipeTransform {
   transform(file: Express.Multer.File) {
     if (!file) return file;
-    if (!file.mimetype.match(/^image\/(png|jpe?g|gif|webp)$/)) {
+    if (!file.mimetype.match(/^image\/(png|jpe?g)$/)) {
       throw new BadRequestException('Only image files are allowed');
     }
     if (file.size > 5 * 1024 * 1024) {

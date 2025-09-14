@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { Employee } from './entities/employee.entity';
 import { UserService } from '../user/user.service';
 import { Position } from './entities/position.entity';
@@ -205,4 +205,20 @@ export class EmployeeService {
     return this.findById(id);
   }
 
+  async findManyByName(search: string) {
+    return this.employees.find({
+      where: [
+        { firstName: Like(`%${search}%`) },
+        { lastName: Like(`%${search}%`) },
+      ],
+    });
+  }
+
+  async findManyByIds(ids: number[]) {
+    if (!ids.length) return [];
+    return this.employees.find({
+      where: { id: In(ids) },
+      relations: ['position'],
+    });
+  }
 }

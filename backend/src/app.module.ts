@@ -12,6 +12,7 @@ import { AttendanceStatus } from './attendance/entities/attendance-status.entity
 import { EmployeeModule } from './employee/employee.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { AttendanceModule } from './attendance/attendance.module';
 
 @Module({
   imports: [
@@ -33,7 +34,8 @@ import { AuthModule } from './auth/auth.module';
     TypeOrmModule.forFeature([User, Employee, Attendance, AttendanceStatus, Position, Role]),
     AuthModule,
     EmployeeModule,
-    UserModule
+    UserModule,
+    AttendanceModule
   ],
   controllers: [AppController],
   providers: [AppService],
