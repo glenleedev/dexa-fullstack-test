@@ -7,18 +7,18 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Employee } from "./employee.entity";
+import { Employee } from "../../employee/entities/employee.entity";
 import { Role } from "./role.entity";
 
-@Index("email", ["email"], { unique: true })
 @Index("fk_user_role", ["roleId"], {})
+@Index("username", ["username"], { unique: true })
 @Entity("user", { schema: "attendance" })
 export class User {
   @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
   id: number;
 
-  @Column("varchar", { name: "email", unique: true, length: 255 })
-  email: string;
+  @Column("varchar", { name: "username", unique: true, length: 255 })
+  username: string;
 
   @Column("varchar", { name: "password", length: 255 })
   password: string;
