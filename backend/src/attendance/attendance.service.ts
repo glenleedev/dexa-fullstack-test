@@ -90,7 +90,7 @@ export class AttendanceService {
       where,
       skip: (dto.page - 1) * dto.limit,
       take: dto.limit,
-      order: { attendanceDttm: 'DESC' },
+      order: { attendanceDttm: 'ASC' },
       relations: ['status']
     });
 
@@ -111,6 +111,7 @@ export class AttendanceService {
         attendDt,
         attendTm,
         status: a.status?.name ?? null,
+        statusId: a.statusId,
         email: map.get(a.employeeId)?.email ?? null,
         firstName: map.get(a.employeeId)?.firstName ?? null,
         lastName: map.get(a.employeeId)?.lastName ?? null,
@@ -138,27 +139,38 @@ export class AttendanceService {
       where.attendanceDttm = Between(new Date(dto.from), new Date(dto.to));
     }
 
-    const data = await this.attendances.find({
+    const page = dto.page ?? 1;
+    const limit = dto.limit ?? 10;
+
+    const [data, total] = await this.attendances.findAndCount({
       where,
       relations: ['status'],
-      order: { attendanceDttm: 'DESC' },
+      order: { attendanceDttm: 'ASC' },
+      skip: (page - 1) * limit,
+      take: limit,
     });
 
     const flattened = data.map((a) => ({
       attendDt: moment(a.attendanceDttm).format('DD-MM-YYYY'),
       attendTm: moment(a.attendanceDttm).format('HH:mm:ss'),
       status: a.status?.name ?? null,
+      statusId: a.statusId,
     }));
 
     const summary = {
-      in: data.filter((a) => a.status?.id === 1).length,
-      out: data.filter((a) => a.status?.id === 2).length,
+      in: await this.attendances.count({ where: { ...where, status: { id: 1 } } }),
+      out: await this.attendances.count({ where: { ...where, status: { id: 2 } } }),
     };
 
     return {
       data: flattened,
-      summary
+      summary,
+       meta: {
+        total,
+        page: dto.page,
+        limit: dto.limit,
+        totalPages: Math.ceil(total / dto.limit),
+      },
     };
   }
-
 }

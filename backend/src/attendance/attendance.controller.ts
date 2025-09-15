@@ -30,6 +30,6 @@ export class AttendanceController {
     @Req() req: any,
     @Query() dto: ListAttendanceSelfDto,
   ) {
-    return this.attendanceService.findByIdWithMeta(req.id, dto);
+    return this.attendanceService.findByIdWithMeta(req.user.employeeId, dto);
   }
 }

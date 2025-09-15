@@ -61,7 +61,7 @@ export class EmployeeController {
     @Body() dto: UpdateEmployeeSelfDto,
     @UploadedFile(ImageFileValidationPipe) photo?: any,
   ) {
-    return this.employeeService.updateSelf(req.id, dto, photo);
+    return this.employeeService.updateSelf(req.user.id, dto, photo);
   }
 
   @UseGuards(AdminAuthGuard)

@@ -23,6 +23,7 @@ export class AuthService {
     if (!emp) throw new NotFoundException('Employee data not found');
     const payload = {
       id: user.id,
+      employeeId: emp.id,
       roleId: user.role?.id,
       roleName: user.role?.name,
       firstName: emp?.firstName,
