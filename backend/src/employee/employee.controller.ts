@@ -16,6 +16,12 @@ import { ImageFileValidationPipe } from '../common/pipes/photo-validation.pipe';
 @Controller('employee')
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) { }
+  @UseGuards(JwtAuthGuard)
+  @Get('self')
+  async findByIdSelf(@Req() req: any) {
+    return this.employeeService.findById(req.user.id);
+  }
+
   @UseGuards(AdminAuthGuard)
   @Get(':id')
   async findById(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
