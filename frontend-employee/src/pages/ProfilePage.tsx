@@ -53,8 +53,7 @@ export default function ProfilePage() {
 
       Swal.fire({
         icon: "success",
-        title: "Profile Updated Successfully",
-        confirmButtonColor: "#7E57C2",
+        title: "Profile Updated Successfully"
       });
     } catch (err) {
       console.error(err);

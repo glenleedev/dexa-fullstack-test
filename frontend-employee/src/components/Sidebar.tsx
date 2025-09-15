@@ -52,7 +52,7 @@ export default function Sidebar({
           Welcome,
         </Typography>
         <Typography
-          variant="body2"
+          variant="h6"
           fontWeight="bold"
           sx={{ color: colors.textColor || theme.palette.primary.main }}
         >
@@ -126,6 +126,7 @@ export default function Sidebar({
             boxShadow: isDesktop ? "2px 0px 12px rgba(0,0,0,0.05)" : "none",
             borderRight: isDesktop ? "none" : undefined,
             boxSizing: "border-box",
+            zIndex: 1000,
           },
         }}
       >
