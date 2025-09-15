@@ -3,17 +3,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Employee } from './employee/entities/employee.entity';
-import { Position } from './employee/entities/position.entity';
-import { Role } from './user/entities/role.entity';
-import { User } from './user/entities/user.entity';
-import { Attendance } from './attendance/entities/attendance.entity';
-import { AttendanceStatus } from './attendance/entities/attendance-status.entity';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { EmployeeModule } from './employee/employee.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { AttendanceModule } from './attendance/attendance.module';
 import { AuditModule } from './employee-audit/employee-audit.module';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -21,6 +17,10 @@ import { AuditModule } from './employee-audit/employee-audit.module';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '../.env',
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads', 'employees'),
+      serveRoot: '/uploads/employees',
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
