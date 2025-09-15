@@ -17,6 +17,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import { useTheme } from "@mui/material/styles";
 import { Link, useLocation } from "react-router-dom";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuth } from "../contexts/AuthContext";
 
 const drawerWidth = 240;
@@ -24,7 +25,7 @@ const drawerWidth = 240;
 const menuItems = [
   { label: "Profile", icon: <PeopleIcon />, path: "/app/profile" },
   { label: "Attendance", icon: <AssignmentIcon />, path: "/app/attendance" },
-  { label: "Summary", icon: <DashboardIcon />, path: "/app/summary" },
+  { label: "Attendance Summary", icon: <DashboardIcon />, path: "/app/attendance-summary" },
 ];
 
 type SidebarColors = {
@@ -42,7 +43,7 @@ export default function Sidebar({
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
   const [open, setOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const location = useLocation();
 
   const drawerContent = (
@@ -62,7 +63,7 @@ export default function Sidebar({
       <Divider />
       <List sx={{ flexGrow: 1 }}>
         {menuItems.map((item) => {
-          const isActive = location.pathname.startsWith(item.path);
+          const isActive = location.pathname === item.path;
           return (
             <ListItemButton
               key={item.path}
@@ -91,6 +92,19 @@ export default function Sidebar({
             </ListItemButton>
           );
         })}
+        <ListItemButton
+          onClick={logout}
+          sx={{
+            borderRadius: 2,
+            mx: 1,
+            my: 0.5,
+          }}
+        >
+          <ListItemIcon sx={{ color: "inherit" }}>
+            <LogoutIcon />
+          </ListItemIcon>
+          <ListItemText primary="Logout" />
+        </ListItemButton>
       </List>
     </Box>
   );

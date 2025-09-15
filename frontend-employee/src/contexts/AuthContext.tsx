@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo } from "react";
+import { createContext, useContext, useMemo, useCallback } from "react";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 
@@ -14,9 +14,10 @@ type JwtPayload = {
 type AuthContextType = {
   user: JwtPayload | null;
   token: string | null;
+  logout: () => any,
 };
 
-const AuthContext = createContext<AuthContextType>({ user: null, token: null });
+const AuthContext = createContext<AuthContextType>({ user: null, token: null, logout: () => {} });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const token = Cookies.get("jwt") || null;
@@ -28,9 +29,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return null;
     }
   }, [token]);
+  
+  const logout = useCallback(() => {
+    Cookies.remove("jwt");
+    window.location.href = "/login";
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, token }}>
+    <AuthContext.Provider value={{ user, token, logout }}>
       {children}
     </AuthContext.Provider>
   );
