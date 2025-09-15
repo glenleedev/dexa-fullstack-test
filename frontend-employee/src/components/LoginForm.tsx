@@ -7,7 +7,7 @@ import axios from "axios"
 import Cookies from "js-cookie"
 import Swal from "sweetalert2"
 
-export default function LoginPage() {
+export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState<string>();

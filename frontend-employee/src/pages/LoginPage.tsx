@@ -1,10 +1,10 @@
 import LoginForm from "../components/LoginForm";
 import {
-  Card,
   CardContent,
   Typography,
   Box,
 } from "@mui/material";
+import CustomCard from "../components/CustomCard";
 
 export default function LoginPage() {
   return (
@@ -16,14 +16,8 @@ export default function LoginPage() {
         alignItems: "center",
       }}
     >
-      <Card
-        sx={{
-          width: 400,
-          borderRadius: 4,
-          boxShadow: "0px 8px 24px rgba(0,0,0,0.05)",
-        }}
-      >
-        <CardContent sx={{ p: 5 }}>
+      <CustomCard sx={{ maxWidth: 500, width: "100%" }}>
+        <CardContent>
           <Typography
             variant="h5"
             fontWeight="bold"
@@ -35,7 +29,7 @@ export default function LoginPage() {
           <LoginForm />
 
         </CardContent>
-      </Card>
+      </CustomCard>
     </Box>
   );
 }
