@@ -17,19 +17,19 @@ type AuthContextType = {
   logout: () => any,
 };
 
-const AuthContext = createContext<AuthContextType>({ user: null, token: null, logout: () => {} });
+const AuthContext = createContext<AuthContextType>({ user: null, token: null, logout: () => { } });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const token = Cookies.get("jwt") || null;
-  const user = useMemo(() => {
-    if (!token) return null;
+  let user: JwtPayload | null = null;
+  if (token) {
     try {
-      return jwtDecode<JwtPayload>(token);
+      user = jwtDecode<JwtPayload>(token);
     } catch {
-      return null;
+      user = null;
     }
-  }, [token]);
-  
+  }
+
   const logout = useCallback(() => {
     Cookies.remove("jwt");
     window.location.href = "/login";
