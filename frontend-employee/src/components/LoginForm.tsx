@@ -3,6 +3,9 @@ import {
   TextField,
   Button,
 } from "@mui/material";
+import axios from "axios"
+import Cookies from "js-cookie"
+import Swal from "sweetalert2"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -10,7 +13,7 @@ export default function LoginPage() {
   const [emailError, setEmailError] = useState<string>();
   const [passwordError, setPasswordError] = useState<string>();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setEmailError(undefined);
     setPasswordError(undefined);
@@ -28,7 +31,19 @@ export default function LoginPage() {
       valid = false;
     }
 
-    if (valid) console.log("Login:", { email, password });
+    if (valid) {
+      try {
+        const res = await axios.post(`${import.meta.env.VITE_BACKEND_APIURL}/auth/login`, { email, password });
+        if (res.data.access_token) {
+          Cookies.set("jwt", res.data.access_token);
+          window.location.href = "/app";
+        }
+      } catch (err: any) {
+        if (err.response.status === 401) {
+          Swal.fire({ icon: "error", title: "Invalid username or password" });
+        } else Swal.fire({ icon: "error", title: "Login failed" });
+      }
+    }
   };
 
   return (

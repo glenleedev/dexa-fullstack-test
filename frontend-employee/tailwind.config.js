@@ -2,7 +2,13 @@
 export default {
   content: [],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: {
+          DEFAULT: "#7E57C2"
+        },
+      },
+    },
   },
   plugins: [],
 }

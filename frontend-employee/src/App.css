@@ -7,3 +7,19 @@ body {
   background: url('/images/bg.jpeg') no-repeat center center fixed;
   background-size: cover;
 }
+
+.color-primary {
+  color: #7E57C2 !important;
+}
+
+.swal2-popup {
+  font-family: "Roboto", sans-serif;
+}
+.swal2-title {
+  font-weight: 500;
+  font-size: 1.25rem;
+}
+.swal2-styled.swal2-confirm {
+  background-color: #7E57C2 !important;
+  border-radius: 8px;
+}
