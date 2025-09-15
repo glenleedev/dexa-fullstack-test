@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Like, Repository } from 'typeorm';
 import { Employee } from './entities/employee.entity';
@@ -11,6 +11,7 @@ import { unlink } from 'fs/promises';
 import { UpdateEmployeeAdminDto } from './dto/update-employee-admin.dto';
 import { UpdateEmployeeSelfDto } from './dto/update-employee-self.dto';
 import { QueryFailedError } from 'typeorm';
+import { ClientKafka } from '@nestjs/microservices';
 
 @Injectable()
 export class EmployeeService {
@@ -18,6 +19,7 @@ export class EmployeeService {
     @InjectRepository(Employee) private employees: Repository<Employee>,
     private readonly userService: UserService,
     @InjectRepository(Position) private positions: Repository<Position>,
+    @Inject('KAFKA_CLIENT') private kafka: ClientKafka
   ) { }
 
   async findById(userId: number) {
@@ -144,15 +146,22 @@ export class EmployeeService {
   //update employee's own profile (allowed: password, phone, photo)
   async updateSelf(id: number, dto: UpdateEmployeeSelfDto, photo?: any) {
     const emp = await this.employees.findOne({ where: { id } });
+    const changed: any = [];
+
     if (!emp) throw new NotFoundException();
+    const payload: Partial<Employee> = {};
 
-    const payload: Partial<Employee> = {
-      phone: dto.phone ?? emp.phone
-    };
-
+    if (dto.phone) {
+      payload.phone = dto.phone;
+      //only push if phone value differs
+      if (payload.phone !== emp.phone) changed.push({ field: 'phone', before: emp.phone, after: payload.phone });
+    }
     if (photo) {
-      if (emp.photo) await this.deletePhotoFile(emp.photo);
+      //commented to make photo log useful (past photos remain in uploads folder)
+      //if (emp.photo) await this.deletePhotoFile(emp.photo);
       payload.photo = await this.savePhotoFile(photo);
+      //only push if photo filename differs (which suggests reupload from frontend)
+      if (payload.photo !== emp.photo) changed.push({ field: 'photo', before: emp.photo, after: payload.photo });
     }
     try {
       await this.employees.update(emp.id, payload);
@@ -161,8 +170,18 @@ export class EmployeeService {
         throw new ConflictException('Duplicate value for unique field');
       }
     }
+    if (dto.password) {
+      await this.userService.updatePassword(emp.userId, dto.password);
+      changed.push({ field: 'password' });
+    }
 
-    if (dto.password) await this.userService.updatePassword(emp.userId, dto.password);
+    if(changed.length) { 
+      this.kafka.emit('employee.self.updated', {
+        employeeId: emp.id,
+        changed,
+      });
+    }
+
     return this.findById(emp.userId);
   }
 

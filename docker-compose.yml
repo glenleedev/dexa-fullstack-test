@@ -74,4 +74,4 @@ services:
     restart: unless-stopped
     command: redpanda start --overprovisioned --smp 1 --memory 512M --reserve-memory 0M --node-id 0
     ports:
-      - "9092:9092" #api port
+      - "${RED_PANDA_PORT}:9092" #api port

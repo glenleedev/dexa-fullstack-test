@@ -13,6 +13,7 @@ import { EmployeeModule } from './employee/employee.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { AttendanceModule } from './attendance/attendance.module';
+import { AuditModule } from './employee-audit/employee-audit.module';
 
 @Module({
   imports: [
@@ -31,7 +32,7 @@ import { AttendanceModule } from './attendance/attendance.module';
       autoLoadEntities: true,
       synchronize: false,
     }),
-     TypeOrmModule.forRoot({
+    TypeOrmModule.forRoot({
       name: 'audit',
       type: 'mysql',
       host: process.env.AUDIT_DB_HOST,
@@ -42,11 +43,11 @@ import { AttendanceModule } from './attendance/attendance.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([User, Employee, Attendance, AttendanceStatus, Position, Role]),
     AuthModule,
     EmployeeModule,
     UserModule,
-    AttendanceModule
+    AttendanceModule,
+    AuditModule
   ],
   controllers: [AppController],
   providers: [AppService],
