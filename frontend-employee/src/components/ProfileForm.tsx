@@ -29,7 +29,7 @@ export default function ProfileForm({ initialName, initialEmail, initialPosition
 
     let valid = true;
 
-    if (phone && !/^\+?\d{8,15}$/.test(phone)) {
+    if (!/^\+?\d{8,15}$/.test(phone)) {
       setPhoneError("Enter a valid phone number");
       valid = false;
     }
@@ -88,7 +88,12 @@ export default function ProfileForm({ initialName, initialEmail, initialPosition
       <TextField
         label="Phone"
         value={phone}
-        onChange={(e) => setPhone(e.target.value)}
+        onChange={(e) => {
+          const v = e.target.value;
+          setPhone(v);
+          if (/^\+?\d{8,15}$/.test(v)) setPhoneError(undefined);
+          else setPhoneError("Enter a valid phone number");
+        }}
         fullWidth
         error={Boolean(phoneError)}
         helperText={phoneError}
@@ -96,7 +101,7 @@ export default function ProfileForm({ initialName, initialEmail, initialPosition
       />
 
       <TextField
-        label="New Password"
+        label="New Password (Leave blank if not changing)"
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
@@ -107,7 +112,7 @@ export default function ProfileForm({ initialName, initialEmail, initialPosition
       <Button
         type="submit"
         variant="contained"
-        disabled={isSaving} 
+        disabled={isSaving}
         sx={{
           textTransform: "none",
           borderRadius: 2,

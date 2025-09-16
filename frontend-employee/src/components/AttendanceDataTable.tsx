@@ -110,7 +110,7 @@ export default function AttendanceDatatable({ defaultFrom, defaultTo }: Props) {
           overflowX: "auto", //for mobile
         }}
       >
-        <Table size="medium">
+        <Table size="medium" stickyHeader>
           <TableHead>
             <TableRow>
               <TableCell>Date</TableCell>
