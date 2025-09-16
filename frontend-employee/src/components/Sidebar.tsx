@@ -50,7 +50,7 @@ export default function Sidebar({
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <Box sx={{ p: 3, textAlign: "center" }}>
         <Typography variant="subtitle2" color="textSecondary">
-          Welcome,
+          Welcome
         </Typography>
         <Typography
           variant="h6"

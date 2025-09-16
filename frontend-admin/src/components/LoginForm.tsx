@@ -9,9 +9,27 @@ type Props = {
 export default function LoginForm({ onSubmit, loading }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState<string>();
+  const [passwordError, setPasswordError] = useState<string>();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    let valid = true;
+
+    if (!email.trim()) {
+      setEmailError("Email is required");
+      valid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setEmailError("Enter a valid email");
+      valid = false;
+    }
+
+    if (!password.trim()) {
+      setPasswordError("Password is required");
+      valid = false;
+    }
+
+    if (!valid) return;
     onSubmit({ email, password });
   };
 
@@ -20,17 +38,30 @@ export default function LoginForm({ onSubmit, loading }: Props) {
       <TextField
         label="Email"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={(e) => {
+          const v = e.target.value;
+          setEmail(v);
+          if (!v.trim()) setEmailError("Email is required");
+          else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) setEmailError("Enter a valid email");
+          else setEmailError(undefined);
+        }}
         fullWidth
-        required
+        error={Boolean(emailError)}
+        helperText={emailError}
       />
       <TextField
         label="Password"
         type="password"
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={(e) => {
+          const v = e.target.value;
+          setPassword(v);
+          if (v.trim()) setPasswordError(undefined);
+          else setPasswordError("Password is required");
+        }}
         fullWidth
-        required
+        error={Boolean(passwordError)}
+        helperText={passwordError}
       />
       <Button
         type="submit"
