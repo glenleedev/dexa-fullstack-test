@@ -1,41 +1,37 @@
 import { useEffect, useState } from "react";
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Paper, TablePagination, Box, CircularProgress, Button, Chip, TextField
+  Paper, TablePagination, Box, CircularProgress, Button, TextField,
+  Dialog, DialogTitle, DialogContent
 } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import moment from "moment";
-import type { Moment } from "moment";
 import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
 import { v4 as uuidv4 } from "uuid";
+import EmployeeForm from "./EmployeeForm";
 
-type Attendance = {
-  id: number;
+type Employee = {
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
   position: string;
-  status: string;
-  statusId: number;
-  attendanceDttm: string;
+  phone: string;
+  role: string;
+  photo: string;
 };
 
-type Props = {
-  defaultFrom?: Moment;
-  defaultTo?: Moment;
-};
-
-export default function EmployeeDatatable({ defaultFrom, defaultTo }: Props) {
+export default function EmployeeDatatable() {
   const { token } = useAuth();
-  const [rows, setRows] = useState<Attendance[]>([]);
+  const [rows, setRows] = useState<Employee[]>([]);
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(10);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [from, setFrom] = useState<Moment>((defaultFrom || moment().startOf("month")).startOf("day"));
-  const [to, setTo] = useState<Moment>((defaultTo || moment()).endOf("day"));
   const [name, setName] = useState("");
+  const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState<Employee | null>(null);
+  const [positions, setPositions] = useState<{ id: number; name: string }[]>([]);
+  const [roles, setRoles] = useState<{ id: number; name: string }[]>([]);
 
   const fetchData = async () => {
     if (!token) return;
@@ -44,25 +40,23 @@ export default function EmployeeDatatable({ defaultFrom, defaultTo }: Props) {
       const params = new URLSearchParams({
         page: String(page + 1),
         limit: String(limit),
-        from: from?.format("YYYY-MM-DD HH:mm") || "",
-        to: to?.format("YYYY-MM-DD HH:mm") || "",
         search: name,
       });
 
       const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_APIURL}/attendance/?${params.toString()}`,
+        `${import.meta.env.VITE_BACKEND_APIURL}/employee?${params.toString()}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const mapped = (res.data.data || []).map((item: any) => ({
-        id: uuidv4(),
+        id: item.id,
         firstName: item.firstName,
         lastName: item.lastName,
         email: item.email,
         position: item.position,
-        attendanceDttm: `${item.attendDt} ${item.attendTm}`,
-        statusId: item.statusId,
-        status: item.status?.toLowerCase(),
+        photo: item.photo,
+        phone: item.phone,
+        role: item.role,
       }));
 
       setRows(mapped);
@@ -73,13 +67,26 @@ export default function EmployeeDatatable({ defaultFrom, defaultTo }: Props) {
     }
   };
 
+  const fetchMeta = async () => {
+    if (!token) return;
+    const posRes = await axios.get(`${import.meta.env.VITE_BACKEND_APIURL}/employee/master/position`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const roleRes = await axios.get(`${import.meta.env.VITE_BACKEND_APIURL}/user/master/role`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setPositions(posRes.data || []);
+    setRoles(roleRes.data || []);
+  };
+
   useEffect(() => {
     fetchData();
+    fetchMeta();
   }, [page, limit]);
 
   return (
-    <Box sx={{ mx: "auto", width: "100%" }}>
-      <Box sx={{ display: "flex", gap: 2, mb: 2, flexWrap: "wrap", alignItems: "center", width: "100%", maxHeight: "80vh" }}>
+    <Box sx={{ mx: "auto", width: "100%", height: "80vh", display: "flex", flexDirection: "column" }}>
+      <Box sx={{ display: "flex", gap: 2, mb: 2, flexWrap: "wrap", alignItems: "center", width: "100%" }}>
         <TextField
           label="Search Name"
           value={name}
@@ -87,20 +94,6 @@ export default function EmployeeDatatable({ defaultFrom, defaultTo }: Props) {
           onKeyDown={(e) => e.key === "Enter" && fetchData()}
           size="small"
           sx={{ flex: 1, minWidth: 160 }}
-        />
-        <DatePicker
-          label="From"
-          value={from}
-          onChange={(v) => setFrom(moment(v).startOf("day"))}
-          format="DD-MM-YYYY"
-          slotProps={{ textField: { size: "small", sx: { flex: 1, minWidth: 160 } } }}
-        />
-        <DatePicker
-          label="To"
-          value={to}
-          onChange={(v) => setTo(moment(v).endOf("day"))}
-          format="DD-MM-YYYY"
-          slotProps={{ textField: { size: "small", sx: { flex: 1, minWidth: 160 } } }}
         />
         <Button
           variant="outlined"
@@ -110,20 +103,30 @@ export default function EmployeeDatatable({ defaultFrom, defaultTo }: Props) {
           }}
           sx={{ textTransform: "none", borderRadius: 2, height: 40, flexShrink: 0 }}
         >
-          Apply
+          Search
+        </Button>
+        <Button
+          variant="outlined"
+          sx={{ textTransform: "none", borderRadius: 2, height: 40, flexShrink: 0, borderColor: "green", color: "green" }}
+          onClick={() => {
+            setEditing(null);
+            setOpen(true);
+          }}
+        >
+          Create
         </Button>
       </Box>
 
-      <TableContainer component={Paper} sx={{ boxShadow: 1, width: "100%", overflowX: "auto" }}>
-        <Table size="small">
+      <TableContainer component={Paper} sx={{ boxShadow: 1, width: "100%", overflow: "auto", flex: 1 }}>
+        <Table size="medium" stickyHeader>
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Position</TableCell>
-              <TableCell>Date</TableCell>
-              <TableCell>Time</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell>Phone</TableCell>
+              <TableCell>Role</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -139,15 +142,19 @@ export default function EmployeeDatatable({ defaultFrom, defaultTo }: Props) {
                   <TableCell>{`${row.firstName} ${row.lastName}`}</TableCell>
                   <TableCell>{row.email}</TableCell>
                   <TableCell>{row.position}</TableCell>
-                  <TableCell>{moment(row.attendanceDttm, "DD-MM-YYYY HH:mm:ss").format("DD-MM-YYYY")}</TableCell>
-                  <TableCell>{moment(row.attendanceDttm, "DD-MM-YYYY HH:mm:ss").format("HH:mm:ss")}</TableCell>
+                  <TableCell>{row.phone}</TableCell>
+                  <TableCell>{row.role}</TableCell>
                   <TableCell>
-                    <Chip
-                      label={row.status}
-                      variant="outlined"
-                      color={row.statusId === 1 ? "success" : "secondary"}
-                      sx={{ textTransform: "capitalize", fontWeight: "bold" }}
-                    />
+                    <Button
+                      variant="text"
+                      sx={{ textTransform: "none" }}
+                      onClick={() => {
+                        setEditing(row);
+                        setOpen(true);
+                      }}
+                    >
+                      Update
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))
@@ -174,6 +181,66 @@ export default function EmployeeDatatable({ defaultFrom, defaultTo }: Props) {
           rowsPerPageOptions={[10, 50, 100]}
         />
       </TableContainer>
+
+      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
+        <DialogTitle>{editing ? "Update Employee" : "Create Employee"}</DialogTitle>
+        <DialogContent>
+          <EmployeeForm
+            isCreate={!editing}
+            initialFirstName={editing?.firstName}
+            initialLastName={editing?.lastName}
+            initialEmail={editing?.email || ""}
+            initialPosition={editing?.position || ""}
+            initialRole={editing?.role || ""}
+            initialPhone={editing?.phone || ""}
+            initialPhoto={
+              editing?.photo
+                ? `${import.meta.env.VITE_BACKEND_APIURL}/${editing?.photo}`
+                : ''
+            }
+            positions={positions}
+            roles={roles}
+            onCancel={() => setOpen(false)}
+            onSubmit={async (data: any) => {
+              try {
+                const formData = new FormData();
+                Object.entries(data).forEach(([key, value]) => {
+                  if (value !== undefined && value !== null) {
+                    formData.append(key, value as any);
+                  }
+                });
+
+                if (!editing) {
+                  await axios.post(
+                    `${import.meta.env.VITE_BACKEND_APIURL}/employee`,
+                    formData,
+                    { headers: { Authorization: `Bearer ${token}` } }
+                  );
+                } else {
+                  const { password, ...rest } = data;
+                  const formDataUpdate = new FormData();
+                  Object.entries(rest).forEach(([key, value]) => {
+                    if (value !== undefined && value !== null) {
+                      formDataUpdate.append(key, value as any);
+                    }
+                  });
+
+                  await axios.patch(
+                    `${import.meta.env.VITE_BACKEND_APIURL}/employee/${editing.id}`,
+                    formDataUpdate,
+                    { headers: { Authorization: `Bearer ${token}` } }
+                  );
+                }
+
+                setOpen(false);
+                fetchData();
+              } catch (err) {
+                console.error(err);
+              }
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 }
