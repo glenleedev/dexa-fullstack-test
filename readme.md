@@ -7,7 +7,7 @@ docker compose up -d
 ```
 
 ## Intro
-Pengerjaan tech test ini menggunakan single repo agar mudah dijalankan. Tapi sebenarnya, di dalam repo ini terdapat tiga buah projects (**backend**, **frontend-employee**, **frontend-admin**). Menggunakan docker containers sebanyak 6 (esensial):
+Pengerjaan tech test ini menggunakan single repo agar mudah dijalankan. Tapi sebenarnya, di dalam repo ini terdapat tiga buah projects (**backend**, **frontend-employee**, **frontend-admin**). Database app dan audit(log) berada pada container terpisah. Menggunakan docker containers sebanyak 6 (esensial):
 - backend
 - db_app (MySQL)
 - db_audit (MySQL)
