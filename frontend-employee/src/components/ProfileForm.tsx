@@ -17,10 +17,21 @@ export default function ProfileForm({ initialName, initialEmail, initialPosition
   const [photo, setPhoto] = useState<File | null>(null);
   const [phoneError, setPhoneError] = useState<string>();
   const [photoError, setPhotoError] = useState<string>();
+  const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     setPhone(initialPhone || "");
   }, [initialPhone]);
+
+  useEffect(() => {
+    if (!photo) {
+      setPreviewUrl(undefined);
+      return;
+    }
+    const objectUrl = URL.createObjectURL(photo);
+    setPreviewUrl(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [photo]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,7 +72,7 @@ export default function ProfileForm({ initialName, initialEmail, initialPosition
       sx={{ display: "flex", flexDirection: "column", gap: 2 }}
     >
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 1 }}>
-        <Avatar src={photo ? URL.createObjectURL(photo) : initialPhoto} sx={{ width: 100, height: 100 }} />
+        <Avatar src={previewUrl || initialPhoto} sx={{ width: 100, height: 100 }} />
         <Button variant="outlined" component="label">
           Change Photo
           <input
