@@ -15,7 +15,6 @@ export default function ProfileForm({ initialName, initialEmail, initialPosition
   const [phone, setPhone] = useState(initialPhone || "");
   const [password, setPassword] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
-
   const [phoneError, setPhoneError] = useState<string>();
   const [photoError, setPhotoError] = useState<string>();
 
@@ -62,7 +61,7 @@ export default function ProfileForm({ initialName, initialEmail, initialPosition
       sx={{ display: "flex", flexDirection: "column", gap: 2 }}
     >
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 1 }}>
-        <Avatar src={initialPhoto} sx={{ width: 100, height: 100 }} />
+        <Avatar src={photo ? URL.createObjectURL(photo) : initialPhoto} sx={{ width: 100, height: 100 }} />
         <Button variant="outlined" component="label">
           Change Photo
           <input
