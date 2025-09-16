@@ -116,7 +116,7 @@ export default function AttendanceDatatable({ defaultFrom, defaultTo }: Props) {
         sx={{
           boxShadow: 1,
           width: "100%",
-          overflowX: "auto", // responsive scroll di mobile
+          overflowX: "auto", //for mobile
         }}
       >
         <Table size="small">

@@ -37,6 +37,7 @@ export default function LoginForm({ onSubmit, loading }: Props) {
         variant="contained"
         fullWidth
         size="large"
+        disabled={loading? true: false}
         sx={{
           textTransform: "none",
           borderRadius: 2,

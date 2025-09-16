@@ -41,7 +41,7 @@ export default function LoginPage() {
             align="center"
             sx={{ mb: 3, color: "#3f3d56" }}
           >
-            Employee Login
+            Employee Attendance Login
           </Typography>
           <LoginForm onSubmit={handleLogin} loading={loading} />
         </CardContent>
