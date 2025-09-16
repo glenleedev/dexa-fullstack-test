@@ -13,4 +13,8 @@ export class ListEmployeeDto {
   @IsInt()
   @Min(1)
   limit?: number;
+
+  @Type(() => String)
+  @IsOptional()
+  search?: string;
 }

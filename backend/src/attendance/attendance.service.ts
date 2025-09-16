@@ -81,7 +81,7 @@ export class AttendanceService {
     if (dto.search) {
       const matched = await this.employeeService.findManyByName(dto.search);
       if (!matched.length)
-        return { data: [], meta: { total: 0, page: dto.page, limit: dto.limit, totalPages: 0 } };
+        return { data: [], meta: { total: 0, page: dto.page, totalPages: 0 } };
       where.employeeId = In(matched.map((e) => e.id));
     }
 
@@ -95,7 +95,7 @@ export class AttendanceService {
     });
 
     if (!data.length)
-      return { data: [], meta: { total: 0, page: dto.page, limit: dto.limit, totalPages: 0 } };
+      return { data: [], meta: { total: 0, page: dto.page, totalPages: 0 } };
 
     //make a unique list of employee ids from attendance data
     const ids = [...new Set(data.map((a) => a.employeeId))];
@@ -164,7 +164,7 @@ export class AttendanceService {
     return {
       data: flattened,
       summary,
-       meta: {
+      meta: {
         total,
         page: dto.page,
         totalPages: Math.ceil(total / dto.limit),

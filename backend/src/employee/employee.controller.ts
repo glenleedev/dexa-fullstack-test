@@ -23,6 +23,12 @@ export class EmployeeController {
   }
 
   @UseGuards(AdminAuthGuard)
+  @Get('master/position')
+  async findMasterPosition(@Req() req: any) {
+    return this.employeeService.findMasterPosition();
+  }
+
+  @UseGuards(AdminAuthGuard)
   @Get(':id')
   async findById(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
     return this.employeeService.findById(id);

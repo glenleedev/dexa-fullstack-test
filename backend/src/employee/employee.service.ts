@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Like, Repository } from 'typeorm';
+import { In, ILike, Repository } from 'typeorm';
 import { Employee } from './entities/employee.entity';
 import { UserService } from '../user/user.service';
 import { Position } from './entities/position.entity';
@@ -27,10 +27,10 @@ export class EmployeeService {
     if (!user) throw new NotFoundException('User data not found');
 
     const emp = await this.employees.findOne({
-      where: {userId: user.id }
+      where: { userId: user.id }
     });
     if (!emp) throw new NotFoundException('Employee data not found');
-    
+
     return emp;
   }
 
@@ -129,8 +129,14 @@ export class EmployeeService {
     await this.userService.remove(emp.userId);
   }
 
-  async findAllWithMeta({ page = 1, limit = 10 }: { page?: number; limit?: number; positionId?: number }) {
-    const where: any = {};
+  async findAllWithMeta({ page = 1, limit = 10, search = '' }: { page?: number; limit?: number; positionId?: number, search?: string }) {
+    let where: any = {};
+    if (search) {
+      where = [
+        { firstName: ILike(`%${search}%`) },
+        { lastName: ILike(`%${search}%`) },
+      ];
+    }
     const [data, total] = await this.employees.findAndCount({
       where,
       relations: ['position'],
@@ -139,17 +145,26 @@ export class EmployeeService {
       order: { id: 'ASC' },
     });
 
+    const userIds = data.map(emp => emp.userId);
+    const users = await this.userService.findManyByIds(userIds);
+
     return {
-      data: data.map(emp => ({
-        id: emp.id,
-        firstName: emp.firstName,
-        lastName: emp.lastName,
-        email: emp.email
-      })),
+      data: data.map(emp => {
+        const user = users.find(u => u.id === emp.userId);
+        return {
+          id: emp.id,
+          firstName: emp.firstName,
+          lastName: emp.lastName,
+          phone: emp.phone,
+          photo: emp.photo,
+          position: emp.position.name,
+          email: emp.email,
+          role: user?.role?.name || ''
+        };
+      }),
       meta: {
         total,
         page,
-        limit,
         totalPages: Math.ceil(total / limit),
       },
     };
@@ -187,7 +202,7 @@ export class EmployeeService {
       changed.push({ field: 'password' });
     }
 
-    if(changed.length) { 
+    if (changed.length) {
       this.kafka.emit('employee.self.updated', {
         employeeId: emp.id,
         changed,
@@ -239,8 +254,8 @@ export class EmployeeService {
   async findManyByName(search: string) {
     return this.employees.find({
       where: [
-        { firstName: Like(`%${search}%`) },
-        { lastName: Like(`%${search}%`) },
+        { firstName: ILike(`%${search}%`) },
+        { lastName: ILike(`%${search}%`) },
       ],
     });
   }
@@ -251,5 +266,9 @@ export class EmployeeService {
       where: { id: In(ids) },
       relations: ['position'],
     });
+  }
+
+  async findMasterPosition() {
+    return this.positions.find({});
   }
 }

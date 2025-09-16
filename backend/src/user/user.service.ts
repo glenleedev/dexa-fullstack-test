@@ -1,13 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import { Role } from './entities/role.entity';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private users: Repository<User>,
+    @InjectRepository(Role) private roles: Repository<Role>,
   ) { }
   async findByUsername(username: string): Promise<User | null> {
     return this.users.findOne({ where: { username } });
@@ -44,5 +46,17 @@ export class UserService {
 
   async remove(id: number) {
     await this.users.delete(id);
+  }
+
+  async findManyByIds(ids: number[]) {
+    if (!ids.length) return [];
+    return this.users.find({
+      where: { id: In(ids) },
+      relations: ['role'],
+    });
+  }
+
+  async findMasterRole() {
+    return this.roles.find({});
   }
 }
