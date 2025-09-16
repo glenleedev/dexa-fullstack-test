@@ -22,13 +22,22 @@ export class EmployeeService {
     @Inject('KAFKA_CLIENT') private kafka: ClientKafka
   ) { }
 
-  async findById(userId: number) {
-    //get from user Service (microservice concept)
+  async findByUserId(userId: number) {
     const user = await this.userService.findById(userId);
-    if (!user) throw new NotFoundException('Employee data not found');
+    if (!user) throw new NotFoundException('User data not found');
+
+    const emp = await this.employees.findOne({
+      where: {userId: user.id }
+    });
+    if (!emp) throw new NotFoundException('Employee data not found');
+    
+    return emp;
+  }
+
+  async findById(id: number) {
     //for position, joins directly
     const emp = await this.employees.findOne({
-      where: { user: { id: userId } },
+      where: { id },
       relations: ['position'],
       select: {
         id: true,
@@ -41,6 +50,10 @@ export class EmployeeService {
       },
     });
     if (!emp) throw new NotFoundException('Employee data not found');
+
+    //for use get from user service (microservice concept)
+    const user = await this.userService.findById(emp.userId);
+    if (!user) throw new NotFoundException('User data not found');
 
     return {
       id: emp.id,
@@ -105,8 +118,7 @@ export class EmployeeService {
       user,
       position,
     });
-    await this.employees.save(emp);
-    return this.findById(user.id);
+    return await this.employees.save(emp);
   }
 
   async remove(employeeId: number) {
@@ -182,7 +194,7 @@ export class EmployeeService {
       });
     }
 
-    return this.findById(emp.userId);
+    return this.findById(emp.id);
   }
 
   //update any employee by HR admin (allowed: any but password)

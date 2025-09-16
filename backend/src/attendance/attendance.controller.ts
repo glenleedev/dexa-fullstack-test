@@ -12,16 +12,7 @@ export class AttendanceController {
   @Post('self')
   @UseGuards(JwtAuthGuard)
   async create(@Req() req: any) {
-    return this.attendanceService.recordAttendance(req.user.userId);
-  }
-
-  @Get()
-  @UseGuards(AdminAuthGuard)
-  async findAllWithMeta(
-    @Req() req: any,
-    @Query() dto: ListAttendanceAdminDto,
-  ) {
-    return this.attendanceService.findAllWithMeta(dto);
+    return this.attendanceService.recordAttendance(req.user.employeeId);
   }
 
   @Get('self')
@@ -31,5 +22,14 @@ export class AttendanceController {
     @Query() dto: ListAttendanceSelfDto,
   ) {
     return this.attendanceService.findByIdWithMeta(req.user.employeeId, dto);
+  }
+
+  @Get()
+  @UseGuards(AdminAuthGuard)
+  async findAllWithMeta(
+    @Req() req: any,
+    @Query() dto: ListAttendanceAdminDto,
+  ) {
+    return this.attendanceService.findAllWithMeta(dto);
   }
 }

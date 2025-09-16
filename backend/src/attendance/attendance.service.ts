@@ -23,15 +23,15 @@ export class AttendanceService {
     };
   }
 
-  async recordAttendance(employeeID: number) {
-    const employee = await this.employeeService.findById(employeeID);
+  async recordAttendance(employeeId: number) {
+    const employee = await this.employeeService.findById(employeeId);
     if (!employee) throw new NotFoundException('Employee not found');
     const todayStart = moment().startOf('day').toDate();
     const todayEnd = moment().endOf('day').toDate();
 
     //get all attendance records for today
     const records = await this.attendances.find({
-      where: { employee: { id: employee.id }, attendanceDttm: Between(todayStart, todayEnd) },
+      where: { employeeId, attendanceDttm: Between(todayStart, todayEnd) },
       relations: ['status'],
       order: { attendanceDttm: 'ASC' },
     });
@@ -40,7 +40,7 @@ export class AttendanceService {
     if (records.length === 0) {
       const saved = await this.attendances.save(
         this.attendances.create({
-          employee: { id: employee.id },
+          employeeId,
           //1 is for check in
           status: { id: 1 },
           attendanceDttm: moment().toDate(),
@@ -58,7 +58,7 @@ export class AttendanceService {
     const attendance = this.attendances.create({
       //if undefined create a new record, else update attend dttm
       id: outRecord?.id,
-      employee: { id: employee.id },
+      employeeId,
       //2 is for check out
       status: { id: 2 },
       attendanceDttm: moment().toDate(),
@@ -133,8 +133,8 @@ export class AttendanceService {
   async findByIdWithMeta(employeeId: number, dto: ListAttendanceSelfDto) {
     const employee = await this.employeeService.findById(employeeId);
     if (!employee) throw new NotFoundException('Employee not found');
-
-    const where: any = { employee: { id: employee.id } };
+    
+    const where: any = { employeeId };
     if (dto.from && dto.to) {
       where.attendanceDttm = Between(new Date(dto.from), new Date(dto.to));
     }

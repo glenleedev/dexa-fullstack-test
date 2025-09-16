@@ -19,7 +19,7 @@ export class EmployeeController {
   @UseGuards(JwtAuthGuard)
   @Get('self')
   async findByIdSelf(@Req() req: any) {
-    return this.employeeService.findById(req.user.id);
+    return this.employeeService.findById(req.user.employeeId);
   }
 
   @UseGuards(AdminAuthGuard)
@@ -61,7 +61,7 @@ export class EmployeeController {
     @Body() dto: UpdateEmployeeSelfDto,
     @UploadedFile(ImageFileValidationPipe) photo?: any,
   ) {
-    return this.employeeService.updateSelf(req.user.id, dto, photo);
+    return this.employeeService.updateSelf(req.user.employeeId, dto, photo);
   }
 
   @UseGuards(AdminAuthGuard)
