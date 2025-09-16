@@ -8,6 +8,7 @@ import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
 import { v4 as uuidv4 } from "uuid";
 import EmployeeForm from "./EmployeeForm";
+import Swal from "sweetalert2";
 
 type Employee = {
   id: string;
@@ -233,10 +234,24 @@ export default function EmployeeDatatable() {
                 }
 
                 setOpen(false);
+
+                await Swal.fire({
+                  icon: "success",
+                  title: `Employee ${editing ? "Successfully Updated" : "Successfully Created"}`,
+                  confirmButtonText: "OK",
+                });
+
                 fetchData();
               } catch (err) {
                 console.error(err);
+                Swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: err instanceof Error ? err.message : "Unknown error",
+                  confirmButtonText: "OK",
+                });
               }
+
             }}
           />
         </DialogContent>
