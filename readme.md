@@ -6,18 +6,26 @@ cd dexa-fullstack-test
 docker compose up -d
 ```
 
-## Intro
+## Login & URL
+| URL | Username | Password | Fitur |
+|-----|----------|----------|-------|
+| [http://localhost:3000](http://localhost:3000) | glen@dexagroup.com | password | Aplikasi attendance employee (check-in/out, lihat riwayat kehadiran, update profil). Admin juga dapat login dan absen seperti employee |
+| [http://localhost:5000](http://localhost:5000) | admin@dexagroup.com | password | Aplikasi khusus admin (create & update employee, lihat semua attendance). Admin juga dapat mencari berdasarkan nama |
+| [http://localhost:8080](http://localhost:8080) | - | - | PHPMyAdmin MySQL Aplikasi jika diperlukan |
+| [http://localhost:8081](http://localhost:8081) | - | - | PHPMyAdmin MySQL Audit jika ingin melihat hasil logging perubahan profile |
+
+## Informasi Project
 Pengerjaan tech test ini menggunakan single repo agar mudah dijalankan. Tapi sebenarnya, di dalam repo ini terdapat tiga buah projects (**backend**, **frontend-employee**, **frontend-admin**). Database app dan audit(log) berada pada container terpisah. Menggunakan docker containers sebanyak 6 (esensial):
-- backend
+- backend (exposed port 8000)
 - db_app (MySQL)
 - db_audit (MySQL)
-- frontend_admin
-- frontend_employee
+- frontend_admin (exposed port 5000)
+- frontend_employee (exposed port 3000)
 - redpanda (event streaming)
 
 dan 2 tambahan (mempermudah lihat data):
-- phpmyadmin_app
-- phpmyadmin_audit
+- phpmyadmin_app (exposed port 8080)
+- phpmyadmin_audit (exposed port 8081)
 
 ## Stack yang Digunakan
 - **Backend:** NestJS. Menggunakan **modular architecture** dengan pemisahan module sehingga mudah dikembangkan dan dapat di-scale menjadi **microservices** di masa depan. Menggunakan **Guards** pada endpoint untuk proteksi role (Admin/User) dan **TypeORM** untuk ORM.
@@ -26,15 +34,6 @@ dan 2 tambahan (mempermudah lihat data):
 - **Database:** MySQL InnoDB, baik untuk database aplikasi dan audit log.
 - **Authentication:** Signed JSON Web Token (JWT).
 - **Streaming:** Redpanda. Dipilih sebagai event streaming platform karena ringan, ini membuat setup untuk tech test lebih sederhana namun tetap kompatibel dengan ekosistem Kafka.
-
-
-## Login & URL
-| URL | Username | Password | Fitur |
-|-----|----------|----------|-------|
-| [http://localhost:3000](http://localhost:3000) | glen@dexagroup.com | password | Aplikasi attendance employee (check-in/out, lihat riwayat kehadiran, update profil). Admin juga dapat login dan absen seperti employee |
-| [http://localhost:5000](http://localhost:5000) | admin@dexagroup.com | password | Aplikasi khusus admin (create & update employee, lihat semua attendance). Admin juga dapat mencari berdasarkan nama |
-| [http://localhost:8080](http://localhost:8080) | - | - | PHPMyAdmin MySQL Aplikasi jika diperlukan |
-| [http://localhost:8081](http://localhost:8081) | - | - | PHPMyAdmin MySQL Audit jika ingin melihat hasil logging perubahan profile |
 
 ## Database Diagrams
 ![Aplikasi](docs/attendance_schema.png)

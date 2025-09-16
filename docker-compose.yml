@@ -80,8 +80,6 @@ services:
       --check=false
       --kafka-addr PLAINTEXT://0.0.0.0:9092
       --advertise-kafka-addr PLAINTEXT://redpanda:9092
-    ports:
-      - "${RED_PANDA_PORT}:9092"
 
   #nestjs production backend
   backend:
