@@ -114,8 +114,8 @@ export default function AttendanceDatatable({ defaultFrom, defaultTo }: Props) {
         </Button>
       </Box>
 
-      <TableContainer component={Paper} sx={{ boxShadow: 1, width: "100%", display: "block", overflowX: "auto" }}>
-        <Table size="medium">
+      <TableContainer component={Paper} sx={{ boxShadow: 1, width: "100%", display: "block", overflowX: "auto", maxHeight: "80vh" }}>
+        <Table size="medium" stickyHeader>
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>

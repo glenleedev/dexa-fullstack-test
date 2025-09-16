@@ -79,7 +79,7 @@ export default function EmployeeDatatable({ defaultFrom, defaultTo }: Props) {
 
   return (
     <Box sx={{ mx: "auto", width: "100%" }}>
-      <Box sx={{ display: "flex", gap: 2, mb: 2, flexWrap: "wrap", alignItems: "center", width: "100%" }}>
+      <Box sx={{ display: "flex", gap: 2, mb: 2, flexWrap: "wrap", alignItems: "center", width: "100%", maxHeight: "80vh" }}>
         <TextField
           label="Search Name"
           value={name}

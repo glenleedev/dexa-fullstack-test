@@ -70,16 +70,7 @@ export default function AttendanceDatatable({ defaultFrom, defaultTo }: Props) {
 
   return (
     <Box sx={{ mx: "auto", width: "100%" }}>
-      <Box
-        sx={{
-          display: "flex",
-          gap: 2,
-          mb: 2,
-          flexWrap: "wrap",
-          alignItems: "center",
-          width: "100%",
-        }}
-      >
+      <Box sx={{ display: "flex", gap: 2, mb: 2, flexWrap: "wrap", alignItems: "center", width: "100%", maxHeight: "80vh" }}>
         <DatePicker
           label="From"
           value={from}
@@ -119,7 +110,7 @@ export default function AttendanceDatatable({ defaultFrom, defaultTo }: Props) {
           overflowX: "auto", //for mobile
         }}
       >
-        <Table size="small">
+        <Table size="medium">
           <TableHead>
             <TableRow>
               <TableCell>Date</TableCell>

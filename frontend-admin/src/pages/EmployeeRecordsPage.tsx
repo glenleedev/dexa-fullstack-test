@@ -18,7 +18,7 @@ export default function AttendanceRecordsPage() {
 
       <PageContainer>
         <Typography variant="h5" fontWeight="bold" mb={3}>
-          Attendance Records
+          Employee Records
         </Typography>
 
         <CustomCard>
