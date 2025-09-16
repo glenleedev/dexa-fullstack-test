@@ -5,14 +5,15 @@ git clone https://github.com/glenleedev/dexa-fullstack-test.git
 cd dexa-fullstack-test
 docker compose up -d
 ```
+**Catatan:** Harap memberi waktu beberapa saat setelah menjalankan `docker compose up -d`
 
 ## Login & URL
 | URL | Username | Password | Fitur |
 |-----|----------|----------|-------|
 | [http://localhost:3000](http://localhost:3000) | glen@dexagroup.com | password | Aplikasi attendance employee (check-in/out, lihat riwayat kehadiran, update profil). Admin juga dapat login dan absen seperti employee |
 | [http://localhost:5000](http://localhost:5000) | admin@dexagroup.com | password | Aplikasi khusus admin (create & update employee, lihat semua attendance). Admin juga dapat mencari berdasarkan nama |
-| [http://localhost:8080](http://localhost:8080) | - | - | PHPMyAdmin MySQL Aplikasi jika diperlukan |
-| [http://localhost:8081](http://localhost:8081) | - | - | PHPMyAdmin MySQL Audit jika ingin melihat hasil logging perubahan profile |
+| [http://localhost:8080](http://localhost:8080) | - | - | PHPMyAdmin MySQL Aplikasi. Berguna untuk melihat data aplikasi |
+| [http://localhost:8081](http://localhost:8081) | - | - | PHPMyAdmin MySQL Audit. Berguna untuk melihat hasil logging perubahan profile |
 
 ## Informasi Project
 Pengerjaan tech test ini menggunakan single repo agar mudah dijalankan. Tapi sebenarnya, di dalam repo ini terdapat tiga buah projects (**backend**, **frontend-employee**, **frontend-admin**). Database app dan audit(log) berada pada container terpisah. Menggunakan docker containers sebanyak 6 (esensial):
