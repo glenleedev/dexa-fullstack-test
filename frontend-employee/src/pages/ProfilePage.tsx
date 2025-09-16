@@ -31,7 +31,7 @@ export default function ProfilePage() {
       })
       .then((res) => setEmployee(res.data))
       .catch((err) => console.error("Failed to fetch employee:", err));
-  }, [token]);
+  }, []);
 
   const handleSave = async (data: { phone?: string; password?: string; photo?: File | null }) => {
     if (!token) return;

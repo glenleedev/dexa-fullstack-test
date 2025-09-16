@@ -29,8 +29,9 @@ export default function AttendanceDatatable({ defaultFrom, defaultTo }: Props) {
   const [limit, setLimit] = useState(10);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [from, setFrom] = useState<Moment | null>(defaultFrom || moment().startOf("month"));
-  const [to, setTo] = useState<Moment | null>(defaultTo || moment());
+  const [from, setFrom] = useState<Moment>((defaultFrom || moment().startOf("month")).startOf("day"));
+  const [to, setTo] = useState<Moment>((defaultTo || moment()).endOf("day"));
+
 
   const fetchData = async () => {
     if (!token) return;
@@ -83,14 +84,14 @@ export default function AttendanceDatatable({ defaultFrom, defaultTo }: Props) {
         <DatePicker
           label="From"
           value={from}
-          onChange={(v) => setFrom(v ? moment(v) : null)}
+          onChange={(v) => setFrom(moment(v).startOf("day"))}
           format="DD-MM-YYYY"
           slotProps={{ textField: { size: "small", sx: { flex: 1, minWidth: 160 } } }}
         />
         <DatePicker
           label="To"
           value={to}
-          onChange={(v) => setTo(v ? moment(v) : null)}
+          onChange={(v) => setTo(moment(v).endOf("day"))}
           format="DD-MM-YYYY"
           slotProps={{ textField: { size: "small", sx: { flex: 1, minWidth: 160 } } }}
         />

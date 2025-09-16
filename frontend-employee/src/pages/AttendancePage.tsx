@@ -29,7 +29,7 @@ export default function AttendancePage() {
 
   useEffect(() => {
     fetchAttendance();
-  }, [token]);
+  }, []);
 
   const handleSubmit = async () => {
     if (!token) return;
