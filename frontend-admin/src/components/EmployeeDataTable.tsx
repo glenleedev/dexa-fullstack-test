@@ -26,7 +26,7 @@ type Props = {
   defaultTo?: Moment;
 };
 
-export default function AttendanceDatatable({ defaultFrom, defaultTo }: Props) {
+export default function EmployeeDatatable({ defaultFrom, defaultTo }: Props) {
   const { token } = useAuth();
   const [rows, setRows] = useState<Attendance[]>([]);
   const [page, setPage] = useState(0);
@@ -114,8 +114,8 @@ export default function AttendanceDatatable({ defaultFrom, defaultTo }: Props) {
         </Button>
       </Box>
 
-      <TableContainer component={Paper} sx={{ boxShadow: 1, width: "100%", display: "block", overflowX: "auto" }}>
-        <Table size="medium">
+      <TableContainer component={Paper} sx={{ boxShadow: 1, width: "100%", overflowX: "auto" }}>
+        <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>

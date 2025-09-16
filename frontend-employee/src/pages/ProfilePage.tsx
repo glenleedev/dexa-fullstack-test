@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import CustomCard from "../components/CustomCard";
 import ProfileForm from "../components/ProfileForm";
 import PageContainer from "../components/PageContainer";
@@ -75,6 +75,10 @@ export default function ProfilePage() {
       />
 
       <PageContainer>
+        <Typography variant="h5" fontWeight="bold" mb={3}>
+          Profile
+        </Typography>
+
         <CustomCard>
           {employee && (
             <ProfileForm

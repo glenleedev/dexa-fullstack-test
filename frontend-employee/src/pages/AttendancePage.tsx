@@ -3,7 +3,7 @@ import Sidebar from "../components/Sidebar";
 import PageContainer from "../components/PageContainer";
 import CustomCard from "../components/CustomCard";
 import AttendanceForm from "../components/AttendanceForm";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useAuth } from "../contexts/AuthContext";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -70,6 +70,10 @@ export default function AttendancePage() {
       />
 
       <PageContainer>
+         <Typography variant="h5" fontWeight="bold" mb={3}>
+          Attendance
+        </Typography>
+
         <CustomCard>
           <AttendanceForm
             checkIn={checkIn}

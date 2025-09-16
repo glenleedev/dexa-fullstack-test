@@ -6,16 +6,19 @@ export default function PageContainer({ children }: { children: React.ReactNode 
       component="main"
       sx={{
         flexGrow: 1,
-        ml: { md: "240px" },
         minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "flex-start",
-        p: 4,
+        px: { xs: 2, md: 4 },
         pt: { xs: 11, md: 4 },
+        pb: 6,
+        boxSizing: "border-box",
+        width: { xs: "100%", md: "calc(100% - 240px)" },
+        ml: { md: "240px" }
       }}
     >
-      <Box sx={{ width: "100%" }}>{children}</Box>
+      <Box sx={{ width: "100%", maxWidth: 1200 }}>{children}</Box>
     </Box>
   );
 }

@@ -2,7 +2,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import LoginPage from "./pages/LoginPage";
-import AttendanceRecordsPage from "./pages/AttendanceRecords";
+import AttendanceRecordsPage from "./pages/AttendanceRecordsPage";
+import EmployeeRecordsPage from "./pages/EmployeeRecordsPage";
 import { useAuth } from "./contexts/AuthContext";
 import "./App.css";
 
@@ -27,6 +28,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <AttendanceRecordsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/employee-records"
+          element={
+            <ProtectedRoute>
+              <EmployeeRecordsPage />
             </ProtectedRoute>
           }
         />
