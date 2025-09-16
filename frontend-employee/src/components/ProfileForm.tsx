@@ -107,7 +107,8 @@ export default function ProfileForm({ initialName, initialEmail, initialPosition
       <Button
         type="submit"
         variant="contained"
-        disabled={isSaving} sx={{
+        disabled={isSaving} 
+        sx={{
           textTransform: "none",
           borderRadius: 2,
           backgroundColor: "#7E57C2",

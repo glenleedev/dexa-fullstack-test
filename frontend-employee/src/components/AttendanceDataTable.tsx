@@ -70,7 +70,7 @@ export default function AttendanceDatatable({ defaultFrom, defaultTo }: Props) {
   }, [page, limit]);
 
   return (
-    <Box sx={{ maxWidth: 800, mx: "auto", width: "100%" }}>
+    <Box sx={{ mx: "auto", width: "100%" }}>
       <Box
         sx={{
           display: "flex",
