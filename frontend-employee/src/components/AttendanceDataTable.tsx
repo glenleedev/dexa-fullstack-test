@@ -58,7 +58,6 @@ export default function AttendanceDatatable({ defaultFrom, defaultTo }: Props) {
 
       setRows(mapped);
       setTotal(res.data.meta?.total || 0);
-      setLimit(res.data.meta?.limit || limit);
       setPage((res.data.meta?.page || 1) - 1);
     } finally {
       setLoading(false);

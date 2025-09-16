@@ -121,7 +121,11 @@ export class AttendanceService {
 
     return {
       data: filtered,
-      meta: { total },
+      meta: {
+        total,
+        page: dto.page,
+        totalPages: Math.ceil(total / dto.limit),
+      },
     };
   }
 
@@ -160,7 +164,11 @@ export class AttendanceService {
     return {
       data: flattened,
       summary,
-      meta: { total },
+       meta: {
+        total,
+        page: dto.page,
+        totalPages: Math.ceil(total / dto.limit),
+      },
     };
   }
 }
