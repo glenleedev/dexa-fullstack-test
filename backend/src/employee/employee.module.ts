@@ -7,18 +7,27 @@ import { EmployeeService } from './employee.service';
 import { EmployeeController } from './employee.controller';
 import { UserModule } from '../user/user.module';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Employee, User, Position]),
-    ClientsModule.register([
+    ConfigModule, 
+    ClientsModule.registerAsync([
       {
         name: 'KAFKA_CLIENT',
-        transport: Transport.KAFKA,
-        options: {
-          client: { clientId: 'api', brokers: [process.env.KAFKA_BROKERS || 'localhost:9092'] },
-          producerOnlyMode: true,
-        },
+        imports: [ConfigModule],
+        inject: [ConfigService],
+        useFactory: (config: ConfigService) => ({
+          transport: Transport.KAFKA,
+          options: {
+            client: {
+              clientId: 'api',
+              brokers: [`${config.get('RED_PANDA_HOST')}:${config.get('RED_PANDA_PORT')}`],
+            },
+            producerOnlyMode: true,
+          },
+        }),
       },
     ]),
     UserModule,
@@ -27,4 +36,4 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
   providers: [EmployeeService],
   exports: [EmployeeService],
 })
-export class EmployeeModule { }
+export class EmployeeModule {}

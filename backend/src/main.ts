@@ -8,15 +8,15 @@ async function bootstrap() {
   app.enableCors();
   //enable payload validation based on dto
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-    app.connectMicroservice<MicroserviceOptions>({
+  const brokers = [`${process.env.RED_PANDA_HOST}:${process.env.RED_PANDA_PORT}`];
+  app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,
     options: {
-      client: { clientId: 'audit-consumer', brokers: [process.env.RED_PANDA_HOST + ':' + process.env.RED_PANDA_PORT] },
+      client: { clientId: 'audit-consumer', brokers },
       consumer: { groupId: 'audit-group' },
     },
   });
-
   await app.startAllMicroservices();
-  await app.listen(process.env.BACKEND_PORT);
+  await app.listen(process.env.BACKEND_PORT || 3000);
 }
 bootstrap();

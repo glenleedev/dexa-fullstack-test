@@ -21,7 +21,7 @@ services:
     container_name: phpmyadmin_app
     restart: unless-stopped
     environment:
-      PMA_HOST: ${APP_DB_PMA_PORT}
+      PMA_HOST: ${APP_DB_HOST}
       PMA_PORT: ${APP_DB_PORT}
       PMA_USER: ${APP_DB_USERNAME}
       PMA_PASSWORD: ${APP_DB_PASSWORD}
@@ -53,7 +53,7 @@ services:
     container_name: phpmyadmin_audit
     restart: unless-stopped
     environment:
-      PMA_HOST: ${AUDIT_DB_PMA_PORT}
+      PMA_HOST: ${AUDIT_DB_HOST}
       PMA_PORT: ${AUDIT_DB_PORT}
       PMA_USER: ${AUDIT_DB_USERNAME}
       PMA_PASSWORD: ${AUDIT_DB_PASSWORD}
@@ -64,13 +64,23 @@ services:
         condition: service_healthy
 
   #redpanda (kafka broker)
-  #redpanda:
-  #  image: redpandadata/redpanda:v24.1.5
-  #  container_name: redpanda
-  #  restart: unless-stopped
-  #  command: redpanda start --overprovisioned --smp 1 --memory 512M --reserve-memory 0M --node-id 0
-  #  ports:
-  #    - "${RED_PANDA_PORT}:9092" #api port
+  redpanda:
+    image: redpandadata/redpanda:v24.1.5
+    container_name: redpanda
+    restart: unless-stopped
+    command: >
+      redpanda start
+      --overprovisioned
+      --smp 1
+      --memory 512M
+      --reserve-memory 0M
+      --node-id 0
+      --check=false
+      --kafka-addr PLAINTEXT://0.0.0.0:9092
+      --advertise-kafka-addr PLAINTEXT://redpanda:9092
+    ports:
+      - "${RED_PANDA_PORT}:9092"
+
 
   #nestjs production backend
   backend:
@@ -87,8 +97,8 @@ services:
         condition: service_healthy
       db_audit:
         condition: service_healthy
-      #redpanda:
-      #  condition: service_started
+      redpanda:
+        condition: service_started
 
   #frontend admin, nginx serves on 80
   frontend_admin:
